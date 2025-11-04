@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Simpsons</string>
+    <string name="app_name">The Simpsons</string>
+    <string name="simpson_photo">Foto del personaje</string>
 </resources>
