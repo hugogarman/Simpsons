@@ -7,7 +7,7 @@ class GetSimpsonsUseCase(private val simpsonsRepository: SimpsonsRepository) {
         return try {
             simpsonsRepository.getSimpsons()
         } catch (e: Exception) {
-            Result.failure(ErrorApp.UnknownError())
+            Result.failure(ErrorApp.UnknownError)
         }
     }
 }

@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class SimpsonRemote(
     val id: Int,
     val name: String,
-    val age: Int?,  // ← Cambiar a Int? (nullable)
+    val age: Int?,
     val occupation: String,
     val portrait_path: String
 )

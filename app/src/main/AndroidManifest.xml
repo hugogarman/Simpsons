@@ -16,6 +16,10 @@
         android:usesCleartextTraffic="true">
 
         <activity
+            android:name=".features.simpsons.presentation.SimpsonDetailActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".features.simpsons.presentation.SimpsonsListActivity"
             android:exported="true">
             <intent-filter>
@@ -23,6 +27,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

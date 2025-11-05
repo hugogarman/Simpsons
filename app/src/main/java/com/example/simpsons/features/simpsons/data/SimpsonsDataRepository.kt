@@ -17,9 +17,9 @@ class SimpsonsDataRepository(private val simpsonsApiRemoteDataSource: SimpsonsAp
             Result.success(simpsons)
         } catch (e: Exception) {
             val appError = when {
-                e.message?.contains("Network") == true -> ErrorApp.NetworkError()
-                e.message?.contains("404") == true -> ErrorApp.NotFoundError()
-                else -> ErrorApp.UnknownError()
+                e.message?.contains("Network") == true -> ErrorApp.NetworkError
+                e.message?.contains("404") == true -> ErrorApp.NotFoundError
+                else -> ErrorApp.UnknownError
             }
             Result.failure(appError)
         }

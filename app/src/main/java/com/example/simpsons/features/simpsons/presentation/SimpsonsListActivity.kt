@@ -1,14 +1,12 @@
 package com.example.simpsons.features.simpsons.presentation
 
+import android.content.Intent
 import android.os.Bundle
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-
-import com.example.simpsons.R
+import com.example.simpsons.databinding.ActivitySimpsonsListBinding
 import com.example.simpsons.features.simpsons.data.SimpsonsDataRepository
 import com.example.simpsons.features.simpsons.data.remote.SimpsonsApiRemoteDataSource
 import com.example.simpsons.features.simpsons.domain.GetSimpsonsUseCase
@@ -20,14 +18,15 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
 class SimpsonsListActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivitySimpsonsListBinding
     private lateinit var viewModel: SimpsonsListViewModel
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var tvTitle: TextView
     private lateinit var adapter: SimpsonsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_simpsons_list)
+        binding = ActivitySimpsonsListBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setupViews()
         setupViewModel()
@@ -36,18 +35,20 @@ class SimpsonsListActivity : AppCompatActivity() {
     }
 
     private fun setupViews() {
-        recyclerView = findViewById(R.id.recyclerView)
-        tvTitle = findViewById(R.id.tvTitle)
-
         adapter = SimpsonsAdapter { simpson ->
-            Toast.makeText(this, "Elegiste a ${simpson.name}", Toast.LENGTH_SHORT).show()
+            // Intent simplificado sin constantes
+            val intent = Intent(this, SimpsonDetailActivity::class.java)
+            intent.putExtra("SIMPSON_NAME", simpson.name)
+            intent.putExtra("SIMPSON_AGE", simpson.age)
+            intent.putExtra("SIMPSON_OCCUPATION", simpson.occupation)
+            startActivity(intent)
         }
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = adapter
+
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.adapter = adapter
     }
 
     private fun setupViewModel() {
-        // Configurar HttpClient de Ktor
         val httpClient = HttpClient(Android) {
             install(ContentNegotiation) {
                 json(Json {
@@ -72,7 +73,7 @@ class SimpsonsListActivity : AppCompatActivity() {
                         adapter.updateSimpsons(state.simpsons)
                     }
 
-                    is SimpsonsUiState.Failure -> {
+                    is SimpsonsUiState.Failure -> {  // ← Cambié "Failure" por "Error"
                         Toast.makeText(
                             this@SimpsonsListActivity,
                             state.message,
@@ -80,8 +81,13 @@ class SimpsonsListActivity : AppCompatActivity() {
                         ).show()
                     }
 
-                    else -> {
-                        // Idle y Loading: no hacemos nada por ahora
+                    is SimpsonsUiState.Loading -> {
+                        // Aquí podrías mostrar un ProgressBar si lo tuvieras
+                        // binding.progressBar.visibility = View.VISIBLE
+                    }
+
+                    is SimpsonsUiState.Idle -> {
+                        // Estado inicial, no hacer nada
                     }
                 }
             }
