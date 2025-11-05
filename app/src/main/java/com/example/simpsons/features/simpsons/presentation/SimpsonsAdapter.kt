@@ -8,46 +8,49 @@ import com.example.simpsons.databinding.ItemSimpsonBinding
 import com.example.simpsons.features.simpsons.domain.Simpson
 
 class SimpsonsAdapter(
-    private var simpsons: List<Simpson> = emptyList(),
-    private val onSimpsonClick: (Simpson) -> Unit
+    private val onSimpsonSelected: (Simpson) -> Unit
 ) : RecyclerView.Adapter<SimpsonsAdapter.SimpsonViewHolder>() {
 
-    inner class SimpsonViewHolder(private val binding: ItemSimpsonBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    private val simpsons = mutableListOf<Simpson>()
 
-        fun bind(simpson: Simpson) {
-            binding.tvSimpsonName.text = simpson.name
-            binding.tvSimpsonOccupation.text = simpson.occupation
-
-            // Cargar imagen con la URL completa
-            binding.ivSimpsonPhoto.load(simpson.portraitPath) {
-                crossfade(true)
-                placeholder(android.R.drawable.ic_menu_gallery)
-                error(android.R.drawable.ic_menu_close_clear_cancel)
-            }
-
-            binding.btnChoose.setOnClickListener {
-                onSimpsonClick(simpson)
-            }
-        }
+    fun submitList(newSimpsons: List<Simpson>) {
+        simpsons.clear()
+        simpsons.addAll(newSimpsons)
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SimpsonViewHolder {
-        val binding = ItemSimpsonBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemSimpsonBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
         return SimpsonViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: SimpsonViewHolder, position: Int) {
-        val simpson = simpsons[position]
-        holder.bind(simpson)
+        holder.bind(simpsons[position])
     }
 
     override fun getItemCount(): Int = simpsons.size
 
-    fun updateSimpsons(newSimpsons: List<Simpson>) {
-        simpsons = newSimpsons
-        notifyDataSetChanged()
+    inner class SimpsonViewHolder(
+        private val binding: ItemSimpsonBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(simpson: Simpson) {
+            binding.ivSimpsonPhoto.load(simpson.portraitPath) {
+                crossfade(true)
+                placeholder(android.R.drawable.ic_menu_gallery)
+                error(android.R.drawable.ic_menu_report_image)
+            }
+
+            binding.tvSimpsonName.text = simpson.name
+            binding.tvSimpsonOccupation.text = simpson.occupation
+
+            binding.btnChoose.setOnClickListener {
+                onSimpsonSelected(simpson)
+            }
+        }
     }
-
-
 }

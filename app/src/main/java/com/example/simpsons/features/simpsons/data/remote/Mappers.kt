@@ -11,6 +11,7 @@ fun SimpsonRemote.toDomainModel(): Simpson {
         name = this.name,
         age = this.age ?: 0,
         occupation = this.occupation,
-        portraitPath = fullImageUrl
+        portraitPath = fullImageUrl,
+        phrases = this.phrases
     )
 }

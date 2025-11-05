@@ -36,11 +36,13 @@ class SimpsonsListActivity : AppCompatActivity() {
 
     private fun setupViews() {
         adapter = SimpsonsAdapter { simpson ->
-            // Intent simplificado sin constantes
-            val intent = Intent(this, SimpsonDetailActivity::class.java)
+            val intent = Intent(this, SimpsonsDetailActivity::class.java)
+            intent.putExtra("SIMPSON_ID", simpson.id)
             intent.putExtra("SIMPSON_NAME", simpson.name)
             intent.putExtra("SIMPSON_AGE", simpson.age)
             intent.putExtra("SIMPSON_OCCUPATION", simpson.occupation)
+            intent.putExtra("SIMPSON_PORTRAIT", simpson.portraitPath)
+            intent.putStringArrayListExtra("SIMPSON_PHRASES", ArrayList(simpson.phrases))
             startActivity(intent)
         }
 
@@ -61,7 +63,6 @@ class SimpsonsListActivity : AppCompatActivity() {
         val remoteDataSource = SimpsonsApiRemoteDataSource(httpClient)
         val repository = SimpsonsDataRepository(remoteDataSource)
         val useCase = GetSimpsonsUseCase(repository)
-
         viewModel = SimpsonsListViewModel(useCase)
     }
 
@@ -70,10 +71,12 @@ class SimpsonsListActivity : AppCompatActivity() {
             viewModel.uiState.collect { state ->
                 when (state) {
                     is SimpsonsUiState.Success -> {
-                        adapter.updateSimpsons(state.simpsons)
+                        hideLoading()
+                        adapter.submitList(state.simpsons)
                     }
 
-                    is SimpsonsUiState.Failure -> {  // ← Cambié "Failure" por "Error"
+                    is SimpsonsUiState.Failure -> {
+                        hideLoading()
                         Toast.makeText(
                             this@SimpsonsListActivity,
                             state.message,
@@ -82,15 +85,23 @@ class SimpsonsListActivity : AppCompatActivity() {
                     }
 
                     is SimpsonsUiState.Loading -> {
-                        // Aquí podrías mostrar un ProgressBar si lo tuvieras
-                        // binding.progressBar.visibility = View.VISIBLE
+                        showLoading()
                     }
 
                     is SimpsonsUiState.Idle -> {
-                        // Estado inicial, no hacer nada
                     }
                 }
             }
         }
+    }
+
+    private fun showLoading() {
+        binding.progressBar.visibility = android.view.View.VISIBLE
+        binding.recyclerView.visibility = android.view.View.GONE
+    }
+
+    private fun hideLoading() {
+        binding.progressBar.visibility = android.view.View.GONE
+        binding.recyclerView.visibility = android.view.View.VISIBLE
     }
 }
