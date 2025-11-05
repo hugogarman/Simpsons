@@ -16,7 +16,7 @@
         android:usesCleartextTraffic="true">
 
         <activity
-            android:name=".features.simpsons.presentation.SimpsonDetailActivity"
+            android:name=".features.simpsons.presentation.SimpsonsDetailActivity"
             android:exported="false" />
 
         <activity

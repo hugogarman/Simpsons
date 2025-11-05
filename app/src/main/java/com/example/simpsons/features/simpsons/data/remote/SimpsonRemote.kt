@@ -8,5 +8,6 @@ data class SimpsonRemote(
     val name: String,
     val age: Int?,
     val occupation: String,
-    val portrait_path: String
+    val portrait_path: String,
+    val phrases: List<String>
 )

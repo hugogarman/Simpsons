@@ -5,5 +5,6 @@ data class Simpson(
     val name: String,
     val age: Int,
     val occupation: String,
-    val portraitPath: String
+    val portraitPath: String,
+    val phrases: List<String>
 )
